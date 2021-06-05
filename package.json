@@ -1,0 +1,50 @@
+{
+  "name": "vscode-plugin-image-hover-preview",
+  "description": "图片预览插件",
+  "keywords": [
+    "vscode",
+    "plugin",
+    "image preview"
+  ],
+  "version": "0.0.1",
+  "homepage": "https://github.com/sxei/vscode-plugin-image-hover-preview/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sxei/vscode-plugin-image-hover-preview"
+  },
+  "bugs": {
+    "url": "https://github.com/ltaoo/vscode-plugin-image-hover-preview/issues"
+  },
+  "scripts": {
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "@types/node": "^7.0.43",
+    "eslint": "^4.11.0",
+    "jest": "^27.0.4",
+    "typescript": "^2.6.1",
+    "vscode": "^1.1.6"
+  },
+  "displayName": "vscode-plugin-image-hover-preview",
+  "publisher": "ltaoo",
+  "engines": {
+    "vscode": "^1.27.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "icon": "images/icon.png",
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./src/extension",
+  "contributes": {
+    "configuration": {},
+    "commands": [],
+    "keybindings": [],
+    "menus": {},
+    "snippets": []
+  },
+  "license": "SEE LICENSE IN LICENSE.txt"
+}
