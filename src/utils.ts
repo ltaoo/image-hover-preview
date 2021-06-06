@@ -10,7 +10,7 @@ const IMAGE_TYPES = {
  * @param {{ type: number; path: string }} image
  * @returns boolean
  */
-function hasProtocol(image) {
+export function hasProtocol(image) {
   const { type, path } = image;
   if (type === IMAGE_TYPES.Local) {
     return false;
@@ -20,20 +20,19 @@ function hasProtocol(image) {
   }
   return false;
 }
-module.exports.hasProtocol = hasProtocol;
 
 /**
  *
  * @param {{ type: number; path: string }} image
  */
-function normalizeUrl(image) {
+export function normalizeUrl(image) {
   if (!hasProtocol(image)) {
     return `https:${image.path}`;
   }
   return image.path;
 }
 
-function extraOnlinePath(content) {
+export function extraOnlinePath(content) {
   const regexp =
     /((https?):)?\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/;
   const res = content.match(regexp);
@@ -84,7 +83,7 @@ const _unixLinkPattern = new RegExp(`${unixLocalLinkClause}`, "g");
  * @param {string} content - 文本
  * @returns - null | string
  */
-function extraLocalPath(content) {
+export function extraLocalPath(content) {
   let match;
   const result = [];
   while ((match = _unixLinkPattern.exec(content))) {
@@ -112,7 +111,7 @@ function extraLocalPath(content) {
  *
  * @param {string} content - 文本
  */
-module.exports.extraPath = function extraPath(content) {
+export function extraPath(content) {
   const localPath = extraLocalPath(content);
   const onlinePath = extraOnlinePath(content);
 
@@ -131,14 +130,12 @@ module.exports.extraPath = function extraPath(content) {
   return null;
 };
 
-module.exports.extraLocalPath = extraLocalPath;
-
 /**
  *
  * @param {{ type: number; path: string }} image
  * @param {string} dir
  */
-function normalizeLocalFilepath(image, dir) {
+export function normalizeLocalFilepath(image, dir) {
   const { path: url } = image;
   return path.resolve(dir, url);
 }
@@ -146,7 +143,7 @@ function normalizeLocalFilepath(image, dir) {
  *
  * @param {{ type: number; path: string }} image
  */
-function normalizeImage(image, dir) {
+export function normalizeImage(image, dir) {
   const { type } = image;
   if (type === IMAGE_TYPES.Online) {
     return normalizeUrl(image);
@@ -156,5 +153,3 @@ function normalizeImage(image, dir) {
   }
   return null;
 }
-
-module.exports.normalizeImage = normalizeImage;

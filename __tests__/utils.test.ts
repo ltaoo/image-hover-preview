@@ -1,22 +1,22 @@
-const { extraLocalPath, extraPath } = require("../src/utils");
+import { extraLocalPath, extraPath } from "../src/utils";
 
-// describe("1、Extra local filepath from text", () => {
-//   it("[1]local relative path", () => {
-//     const url = 'const image = "./images/icon.png"';
+describe("1、Extra local filepath from text", () => {
+  it("[1]local relative path", () => {
+    const url = 'const image = "./images/icon.png"';
 
-//     const res = extraLocalPath(url);
+    const res = extraLocalPath(url);
 
-//     expect(res).toBe("./images/icon.png");
-//   });
+    expect(res).toBe("./images/icon.png");
+  });
 
-//   it("[2]local absolute path", () => {
-//     const url = 'const image = "/images/icon.png"';
+  it("[2]local absolute path", () => {
+    const url = 'const image = "/images/icon.png"';
 
-//     const res = extraLocalPath(url);
+    const res = extraLocalPath(url);
 
-//     expect(res).toBe("/images/icon.png");
-//   });
-// });
+    expect(res).toBe("/images/icon.png");
+  });
+});
 
 describe("1、Extra path from text", () => {
   it("[1]url has protocol", () => {

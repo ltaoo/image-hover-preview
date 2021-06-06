@@ -1,7 +1,17 @@
+# 
+node_modules
 .vscode/**
-.vscode-test/**
-test/**
+*.log
+yarn.lock
+
+#
+__tests__
+example
+assets
+src
+
+# configure
 .gitignore
 jsconfig.json
-vsc-extension-quickstart.md
 .eslintrc.json
+

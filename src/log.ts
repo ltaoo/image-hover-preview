@@ -36,10 +36,8 @@ function error(error) {
   logObj(error.stack);
 }
 
-module.exports = {
+export default {
   log,
   error,
   enter: line,
 };
-
-// export default new LoggingService();

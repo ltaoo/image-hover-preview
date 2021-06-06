@@ -7,26 +7,34 @@
     "image preview"
   ],
   "version": "0.0.1",
-  "homepage": "https://github.com/sxei/vscode-plugin-image-hover-preview/blob/master/README.md",
+  "homepage": "https://github.com/ltaoo/vscode-plugin-image-hover-preview/blob/master/README.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sxei/vscode-plugin-image-hover-preview"
+    "url": "https://github.com/ltaoo/vscode-plugin-image-hover-preview"
   },
   "bugs": {
     "url": "https://github.com/ltaoo/vscode-plugin-image-hover-preview/issues"
   },
+  "main": "./dist/main.js",
   "scripts": {
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test"
+    "start": "npm run -S esbuild-base -- --sourcemap --watch",
+    "build": "npm run -S esbuild-base -- --sourcemap",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
+    "vscode:prepublish": "npm run -S esbuild-base -- --minify",
+    "package": "yarn vsce package"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.23",
     "@types/node": "^7.0.43",
+    "esbuild": "^0.12.6",
     "eslint": "^4.11.0",
     "jest": "^27.0.4",
+    "tsc": "^2.0.3",
     "typescript": "^2.6.1",
+    "vsce": "^1.92.0",
     "vscode": "^1.1.6"
   },
-  "displayName": "vscode-plugin-image-hover-preview",
+  "displayName": "Image Hover Preview",
   "publisher": "ltaoo",
   "engines": {
     "vscode": "^1.27.0"
@@ -38,7 +46,6 @@
   "activationEvents": [
     "*"
   ],
-  "main": "./src/extension",
   "contributes": {
     "configuration": {},
     "commands": [],
