@@ -66,6 +66,7 @@ _________________`;
     "javascriptreact",
     "html",
     "markdown",
+    "vue"
   ].forEach((extension) => {
     context.subscriptions.push(
       vscode.languages.registerHoverProvider(extension, {

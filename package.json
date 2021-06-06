@@ -6,7 +6,7 @@
     "plugin",
     "image preview"
   ],
-  "version": "0.0.1",
+  "version": "0.1.0",
   "homepage": "https://github.com/ltaoo/vscode-plugin-image-hover-preview/blob/master/README.md",
   "repository": {
     "type": "git",
