@@ -21,16 +21,19 @@
     "build": "npm run -S esbuild-base -- --sourcemap",
     "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
     "vscode:prepublish": "npm run -S esbuild-base -- --minify",
-    "package": "yarn vsce package"
+    "package": "yarn vsce package",
+    "publish": "yarn vsce publish",
+    "test": "jest"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.23",
+    "@types/jest": "^26.0.24",
     "@types/node": "^7.0.43",
     "esbuild": "^0.12.6",
     "eslint": "^4.11.0",
-    "jest": "^27.0.4",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.4",
     "tsc": "^2.0.3",
-    "typescript": "^2.6.1",
+    "typescript": "^4.3.5",
     "vsce": "^1.92.0",
     "vscode": "^1.1.6"
   },

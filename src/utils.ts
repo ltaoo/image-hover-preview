@@ -1,18 +1,22 @@
 const path = require("path");
 
-const IMAGE_TYPES = {
-  Online: 1,
-  Local: 2,
-};
+export enum IMAGE_TYPE {
+  Online = 1,
+  Local = 2,
+}
+export interface IImage {
+  type: IMAGE_TYPE;
+  path: string;
+}
 
 /**
  * 图片是否有协议头
  * @param {{ type: number; path: string }} image
  * @returns boolean
  */
-export function hasProtocol(image) {
+export function hasProtocol(image: IImage) {
   const { type, path } = image;
-  if (type === IMAGE_TYPES.Local) {
+  if (type === IMAGE_TYPE.Local) {
     return false;
   }
   if (path.slice(0, 2) !== "//") {
@@ -22,17 +26,20 @@ export function hasProtocol(image) {
 }
 
 /**
- *
+ * 增加协议头
  * @param {{ type: number; path: string }} image
  */
-export function normalizeUrl(image) {
+export function addHttpsProtocol(image: IImage) {
   if (!hasProtocol(image)) {
     return `https:${image.path}`;
   }
   return image.path;
 }
 
-export function extraOnlinePath(content) {
+/**
+ * 从一段文本中提取出网络地址
+ */
+export function extraOnlinePath(content: string) {
   const regexp =
     /((https?):)?\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/;
   const res = content.match(regexp);
@@ -80,10 +87,11 @@ const _winLocalLinkPattern = new RegExp(`${winLocalLinkClause}`, "g");
 const _unixLinkPattern = new RegExp(`${unixLocalLinkClause}`, "g");
 
 /**
+ * 从一段文本中提取出本地图片地址
  * @param {string} content - 文本
  * @returns - null | string
  */
-export function extraLocalPath(content) {
+export function extraLocalPath(content: string) {
   let match;
   const result = [];
   while ((match = _unixLinkPattern.exec(content))) {
@@ -108,34 +116,33 @@ export function extraLocalPath(content) {
 }
 
 /**
- *
+ * 从一段文本中提取出图片地址，网络图片或者本地图片
  * @param {string} content - 文本
  */
-export function extraPath(content) {
-  const localPath = extraLocalPath(content);
+export function extraPath(content: string) {
   const onlinePath = extraOnlinePath(content);
-
   if (onlinePath !== null) {
     return {
-      type: IMAGE_TYPES.Online,
+      type: IMAGE_TYPE.Online,
       path: onlinePath,
     };
   }
+  const localPath = extraLocalPath(content);
   if (localPath !== null) {
     return {
-      type: IMAGE_TYPES.Local,
+      type: IMAGE_TYPE.Local,
       path: localPath,
     };
   }
   return null;
-};
+}
 
 /**
  *
  * @param {{ type: number; path: string }} image
  * @param {string} dir
  */
-export function normalizeLocalFilepath(image, dir) {
+export function normalizeLocalFilepath(image: IImage, dir: string) {
   const { path: url } = image;
   return path.resolve(dir, url);
 }
@@ -143,12 +150,12 @@ export function normalizeLocalFilepath(image, dir) {
  *
  * @param {{ type: number; path: string }} image
  */
-export function normalizeImage(image, dir) {
+export function normalizeImage(image: IImage, dir: string) {
   const { type } = image;
-  if (type === IMAGE_TYPES.Online) {
-    return normalizeUrl(image);
+  if (type === IMAGE_TYPE.Online) {
+    return addHttpsProtocol(image);
   }
-  if (type === IMAGE_TYPES.Local) {
+  if (type === IMAGE_TYPE.Local) {
     return normalizeLocalFilepath(image, dir);
   }
   return null;

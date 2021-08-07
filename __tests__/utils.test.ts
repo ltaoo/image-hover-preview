@@ -18,7 +18,7 @@ describe("1、Extra local filepath from text", () => {
   });
 });
 
-describe("1、Extra path from text", () => {
+describe("2、Extra path from text", () => {
   it("[1]url has protocol", () => {
     const url = 'const image = "https://static.ltaoo.work/15352809220087";';
 
@@ -55,5 +55,23 @@ describe("1、Extra path from text", () => {
     const res = extraPath(url);
 
     expect(res).toStrictEqual({ type: 2, path: "/images/icon.png" });
+  });
+});
+
+describe("3、some text like image path", () => {
+  it("[1]comment", () => {
+    const text = "// this is comment.";
+
+    const res = extraPath(text);
+
+    expect(res).toEqual(null);
+  });
+
+  it("[1]close tag", () => {
+    const text = "<div></div>";
+
+    const res = extraPath(text);
+
+    expect(res).toEqual(null);
   });
 });
