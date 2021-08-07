@@ -1,60 +1,66 @@
-import { extraLocalPath, extraPath } from "../src/utils";
+import { extraLocalPath, extraOnlinePath } from "../src/utils";
 
-describe("1、Extra local filepath from text", () => {
-  it("[1]local relative path", () => {
+describe("1、Extra local image path", () => {
+  it("[1]relative local path", () => {
     const url = 'const image = "./images/icon.png"';
 
-    const res = extraLocalPath(url);
+    const localPath = extraLocalPath(url);
+    expect(localPath).toBe("./images/icon.png");
 
-    expect(res).toBe("./images/icon.png");
+    const onlinePath = extraOnlinePath(url);
+    expect(onlinePath).toBe(null);
   });
 
-  it("[2]local absolute path", () => {
+  it("[2]absolute local path", () => {
     const url = 'const image = "/images/icon.png"';
 
-    const res = extraLocalPath(url);
+    const localPath = extraLocalPath(url);
+    expect(localPath).toBe("/images/icon.png");
 
-    expect(res).toBe("/images/icon.png");
+    const onlinePath = extraOnlinePath(url);
+    expect(onlinePath).toBe(null);
+  });
+
+  it("[3]win absolute local path", () => {
+    const url = 'const image = "C:\\images\\icon.png"';
+
+    const localPath = extraLocalPath(url);
+    expect(localPath).toBe("C:\\images\\icon.png");
+
+    const onlinePath = extraOnlinePath(url);
+    expect(onlinePath).toBe(null);
+  });
+
+  it("[4]win relative local path", () => {
+    const url = 'const image = "\\images\\icon.png"';
+
+    const localPath = extraLocalPath(url);
+    expect(localPath).toBe("\\images\\icon.png");
+
+    const onlinePath = extraOnlinePath(url);
+    expect(onlinePath).toBe(null);
   });
 });
 
-describe("2、Extra path from text", () => {
+describe("2、Extra online image path", () => {
   it("[1]url has protocol", () => {
-    const url = 'const image = "https://static.ltaoo.work/15352809220087";';
+    const text = 'const image = "https://static.ltaoo.work/15352809220087";';
 
-    const res = extraPath(url);
+    const localPath = extraLocalPath(text);
+    expect(localPath).toBe(null);
 
-    expect(res).toStrictEqual({
-      type: 1,
-      path: "https://static.ltaoo.work/15352809220087",
-    });
+    const onlinePath = extraOnlinePath(text);
+    expect(onlinePath).toBe("https://static.ltaoo.work/15352809220087");
   });
 
   it("[2]url no protocol", () => {
-    const url = 'const image = "//static.ltaoo.work/15352809220087";';
+    const text = 'const image = "//static.ltaoo.work/15352809220087";';
 
-    const res = extraPath(url);
+    const localPath = extraLocalPath(text);
+    expect(localPath).toBe(null);
 
-    expect(res).toStrictEqual({
-      type: 1,
-      path: "//static.ltaoo.work/15352809220087",
-    });
-  });
-
-  it("[3]local relative path", () => {
-    const url = 'const image = "./images/icon.png"';
-
-    const res = extraPath(url);
-
-    expect(res).toStrictEqual({ type: 2, path: "./images/icon.png" });
-  });
-
-  it("[4]local absolute path", () => {
-    const url = 'const image = "/images/icon.png"';
-
-    const res = extraPath(url);
-
-    expect(res).toStrictEqual({ type: 2, path: "/images/icon.png" });
+    const onlinePath = extraOnlinePath(text);
+    expect(onlinePath).toBe("//static.ltaoo.work/15352809220087");
   });
 });
 
@@ -62,16 +68,60 @@ describe("3、some text like image path", () => {
   it("[1]comment", () => {
     const text = "// this is comment.";
 
-    const res = extraPath(text);
+    const localPath = extraLocalPath(text);
+    expect(localPath).toBe(null);
 
-    expect(res).toEqual(null);
+    const onlinePath = extraOnlinePath(text);
+    expect(onlinePath).toBe(null);
   });
 
-  it("[1]close tag", () => {
+  it("[2]close tag", () => {
     const text = "<div></div>";
 
-    const res = extraPath(text);
+    const localPath = extraLocalPath(text);
+    expect(localPath).toBe(null);
 
-    expect(res).toEqual(null);
+    const onlinePath = extraOnlinePath(text);
+    expect(onlinePath).toBe(null);
+  });
+
+  it("[3]alias component import", () => {
+    const text = "import SimpleTable from '@/components/SimpleTable'";
+
+    const localPath = extraLocalPath(text);
+    expect(localPath).toBe(null);
+
+    const onlinePath = extraOnlinePath(text);
+    expect(onlinePath).toBe(null);
+  });
+
+  it("[4]relative css file import", () => {
+    const text = "import ss from './index.less'";
+
+    const localPath = extraLocalPath(text);
+    expect(localPath).toBe(null);
+
+    const onlinePath = extraOnlinePath(text);
+    expect(onlinePath).toBe(null);
+  });
+
+  it("[5]relative component file import", () => {
+    const text = "import { withMaxLength } from './maxLength'";
+
+    const localPath = extraLocalPath(text);
+    expect(localPath).toBe(null);
+
+    const onlinePath = extraOnlinePath(text);
+    expect(onlinePath).toBe(null);
+  });
+
+  it("[6]namespace lib import", () => {
+    const text = "import babel from '@babel/core'";
+
+    const localPath = extraLocalPath(text);
+    expect(localPath).toBe(null);
+
+    const onlinePath = extraOnlinePath(text);
+    expect(onlinePath).toBe(null);
   });
 });

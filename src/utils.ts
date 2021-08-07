@@ -49,68 +49,21 @@ export function extraOnlinePath(content: string) {
   return null;
 }
 
-const pathPrefix = "(\\.\\.?|\\~)";
-const pathSeparatorClause = "\\/";
-// '":; are allowed in paths but they are often separators so ignore them
-// Also disallow \\ to prevent a catastropic backtracking case #24798
-const excludedPathCharactersClause = "[^\\0\\s!$`&*()\\[\\]+'\":;\\\\]";
-/** A regex that matches paths in the form /foo, ~/foo, ./foo, ../foo, foo/bar */
-const unixLocalLinkClause =
-  "((" +
-  pathPrefix +
-  "|(" +
-  excludedPathCharactersClause +
-  ")+)?(" +
-  pathSeparatorClause +
-  "(" +
-  excludedPathCharactersClause +
-  ")+)+)";
-
-const winDrivePrefix = "[a-zA-Z]:";
-const winPathPrefix = "(" + winDrivePrefix + "|\\.\\.?|\\~)";
-const winPathSeparatorClause = "(\\\\|\\/)";
-const winExcludedPathCharactersClause =
-  "[^\\0<>\\?\\|\\/\\s!$`&*()\\[\\]+'\":;]";
-/** A regex that matches paths in the form c:\foo, ~\foo, .\foo, ..\foo, foo\bar */
-const winLocalLinkClause =
-  "((" +
-  winPathPrefix +
-  "|(" +
-  winExcludedPathCharactersClause +
-  ")+)?(" +
-  winPathSeparatorClause +
-  "(" +
-  winExcludedPathCharactersClause +
-  ")+)+)";
-
-const _winLocalLinkPattern = new RegExp(`${winLocalLinkClause}`, "g");
-const _unixLinkPattern = new RegExp(`${unixLocalLinkClause}`, "g");
-
 /**
  * 从一段文本中提取出本地图片地址
  * @param {string} content - 文本
  * @returns - null | string
  */
 export function extraLocalPath(content: string) {
-  let match;
-  const result = [];
-  while ((match = _unixLinkPattern.exec(content))) {
-    if (match.length > 1) {
-      const imagePath = match[1];
-      result.push(imagePath);
+  const linuxRegexp =
+    /(?:[A-Z]:|\\|(?:\.{1,2}[\/\\])+)[\w+\\\s_\(\)\/]+(?:\.\w+)*/;
+  let file = content.match(linuxRegexp);
+  if (file !== null) {
+    const filepath = file[0];
+    const { ext } = path.parse(filepath);
+    if (ext !== '') {
+      return filepath;
     }
-  }
-  if (result.length) {
-    return result.join("");
-  }
-  while ((match = _winLocalLinkPattern.exec(content))) {
-    if (match.length > 1) {
-      const imagePath = match[1];
-      result.push(imagePath);
-    }
-  }
-  if (result.length) {
-    return result.join("");
   }
   return null;
 }
