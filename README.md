@@ -26,3 +26,5 @@ yarn start
 
 进入 `debug` 面板，点击 `Run Extension` 即可开始调试。
 
+## Publish
+

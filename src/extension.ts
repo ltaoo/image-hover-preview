@@ -1,20 +1,17 @@
-import vscode from "vscode";
+import vscode, { ExtensionContext, Position, TextDocument } from "vscode";
 
 import path from "path";
 
 import logger from "./log";
-import { extraPath, normalizeImage, hasProtocol } from "./utils";
+import { extraPath, normalizeImage } from "./utils";
 
-export function activate(context) {
+export function activate(context: ExtensionContext) {
   logger.log("Image Hover Preview Started!");
 
-  /**
-   * @param {*} document
-   * @param {*} position
-   */
-  function provideHover(document, position) {
+  function provideHover(document: TextDocument, position: Position) {
     const fileName = document.fileName;
 
+    // @ts-ignore
     const { _line } = position;
     const line = document.lineAt(_line);
     const lineText = line.text;
@@ -44,12 +41,9 @@ export function activate(context) {
         return;
       }
       logger.log(`displayed image path is ${url}`);
-      const followLink = hasProtocol(originalImage)
-        ? ""
-        : `[Follow link](${url}) (cmd + click)
-_________________`;
+
       return new vscode.Hover(
-        new vscode.MarkdownString(`${followLink}
+        new vscode.MarkdownString(`
   \r\n[![](${url}|width=240)](${url})`)
       );
     } catch (err) {
@@ -66,7 +60,7 @@ _________________`;
     "javascriptreact",
     "html",
     "markdown",
-    "vue"
+    "vue",
   ].forEach((extension) => {
     context.subscriptions.push(
       vscode.languages.registerHoverProvider(extension, {
