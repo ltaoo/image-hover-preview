@@ -55,7 +55,21 @@
     "vscode": "^1.1.6"
   },
   "contributes": {
-    "configuration": {},
+    "configuration": {
+      "title": "Image Hover Preview",
+      "properties": {
+        "imageHoverPreview.showSize": {
+          "type": "boolean",
+          "default": true,
+          "description": "Need show image size and dimensions."
+        },
+        "imageHoverPreview.maxWidth": {
+          "type": "number",
+          "default": 240,
+          "description": "The max width of image when hover."
+        }
+      }
+    },
     "commands": [],
     "keybindings": [],
     "menus": {},

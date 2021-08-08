@@ -43,14 +43,17 @@ export function addHttpsProtocol(image: IImage) {
 /**
  * 从一段文本中提取出网络地址
  */
-export function extraOnlinePath(content: string) {
+export function extraOnlinePath(
+  content: string,
+  { ignore }: { ignore?: (string | RegExp)[] } = {}
+) {
   const regexp =
     /((https?):)?\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/;
   const res = content.match(regexp);
-  if (res !== null) {
-    return res[0];
+  if (res === null) {
+    return null;
   }
-  return null;
+  return res[0];
 }
 
 /**
@@ -58,7 +61,10 @@ export function extraOnlinePath(content: string) {
  * @param {string} content - 文本
  * @returns - null | string
  */
-export function extraLocalPath(content: string) {
+export function extraLocalPath(
+  content: string,
+  { ignore }: { ignore?: (string | RegExp)[] } = {}
+) {
   const linuxRegexp =
     /(?:[A-Z]:|\\|(?:\.{1,2}[\/\\])+)[\w+\\\s_\(\)\/]+(?:\.\w+)*/;
   let file = content.match(linuxRegexp);
@@ -76,16 +82,19 @@ export function extraLocalPath(content: string) {
  * 从一段文本中提取出图片地址，网络图片或者本地图片
  * @param {string} content - 文本
  */
-export function extraPath(content: string, options: { dir: string }) {
-  const onlinePath = extraOnlinePath(content);
+export function extraPath(
+  content: string,
+  options: { dir: string; ignore: (string | RegExp)[] }
+) {
+  const { dir, ignore } = options || {};
+  const onlinePath = extraOnlinePath(content, { ignore });
   if (onlinePath !== null) {
     return {
       type: IMAGE_TYPE.Online,
       path: onlinePath,
     };
   }
-  const localPath = extraLocalPath(content);
-  const { dir } = options || {};
+  const localPath = extraLocalPath(content, { ignore });
   if (localPath !== null) {
     return {
       type: IMAGE_TYPE.Local,

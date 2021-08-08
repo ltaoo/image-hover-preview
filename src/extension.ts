@@ -10,6 +10,8 @@ export function activate(context: ExtensionContext) {
 
   async function provideHover(document: TextDocument, position: Position) {
     const fileName = document.fileName;
+    const { showSize, maxWidth, ignore } =
+      vscode.workspace.getConfiguration("imageHoverPreview");
 
     // @ts-ignore
     const { _line } = position;
@@ -25,7 +27,7 @@ export function activate(context: ExtensionContext) {
     }
 
     try {
-      const originalImage = extraPath(lineText, { dir: workDir });
+      const originalImage = extraPath(lineText, { dir: workDir, ignore });
 
       logger.log("Extra filepath from content");
       logger.log(originalImage);
@@ -41,12 +43,18 @@ export function activate(context: ExtensionContext) {
       }
       logger.log(`displayed image path is ${url}`);
 
-      const { width, height, size } = await fetchImgInfo(originalImage);
+      const extraImageInfo = await (async () => {
+        if (showSize === false) {
+          return "";
+        }
+        const { width, height, size } = await fetchImgInfo(originalImage);
+        return `\r\n${size}(${width}x${height})`;
+      })();
 
       return new vscode.Hover(
         new vscode.MarkdownString(`
-  \r\n[![](${url}|width=240)](${url})
-  \r\n${size}(${width}x${height})
+  \r\n[![](${url}|width=${maxWidth})](${url})
+  ${extraImageInfo}
   `)
       );
     } catch (err) {

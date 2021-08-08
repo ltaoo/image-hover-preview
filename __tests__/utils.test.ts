@@ -40,6 +40,16 @@ describe("1、Extra local image path", () => {
     const onlinePath = extraOnlinePath(url);
     expect(onlinePath).toBe(null);
   });
+
+  it("[5]win relative local path with ignore configure", () => {
+    const url = 'const image = "./output/something/image.png"';
+
+    const localPath = extraLocalPath(url, { ignore: ["./output"] });
+    expect(localPath).toBe(null);
+
+    const onlinePath = extraOnlinePath(url);
+    expect(onlinePath).toBe(null);
+  });
 });
 
 describe("2、Extra online image path", () => {
@@ -61,6 +71,16 @@ describe("2、Extra online image path", () => {
 
     const onlinePath = extraOnlinePath(text);
     expect(onlinePath).toBe("//static.ltaoo.work/15352809220087");
+  });
+
+  it("[3]url no protocol with ignore configure", () => {
+    const text = 'const image = "//static.ltaoo.work/15352809220087";';
+
+    const localPath = extraLocalPath(text, { ignore: [/\/\/static/] });
+    expect(localPath).toBe(null);
+
+    const onlinePath = extraOnlinePath(text);
+    expect(onlinePath).toBe(null);
   });
 });
 
