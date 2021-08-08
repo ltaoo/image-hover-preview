@@ -576,6 +576,14 @@
     jest-diff "^26.0.0"
     pretty-format "^26.0.0"
 
+"@types/node-fetch@^2.5.12":
+  version "2.5.12"
+  resolved "http://npm.wpt.la/@types%2fnode-fetch/-/node-fetch-2.5.12.tgz#8a6f779b1d4e60b7a57fb6fd48d84fb545b9cc66"
+  integrity sha1-im93mx1OYLelf7b9SNhPtUW5zGY=
+  dependencies:
+    "@types/node" "*"
+    form-data "^3.0.0"
+
 "@types/node@*":
   version "15.12.1"
   resolved "http://npm.wpt.la/@types%2fnode/-/node-15.12.1.tgz#9b60797dee1895383a725f828a869c86c6caa5c2"
@@ -1795,6 +1803,13 @@ ignore@^5.1.8:
   resolved "http://npm.wpt.la/ignore/-/ignore-5.1.8.tgz#f150a8b50a34289b33e22f5889abd4d8016f0e57"
   integrity sha1-8VCotQo0KJsz4i9YiavU2AFvDlc=
 
+image-size@^1.0.0:
+  version "1.0.0"
+  resolved "http://npm.wpt.la/image-size/-/image-size-1.0.0.tgz#58b31fe4743b1cec0a0ac26f5c914d3c5b2f0750"
+  integrity sha1-WLMf5HQ7HOwKCsJvXJFNPFsvB1A=
+  dependencies:
+    queue "6.0.2"
+
 import-local@^3.0.2:
   version "3.0.2"
   resolved "http://npm.wpt.la/import-local/-/import-local-3.0.2.tgz#a8cfd0431d1de4a2199703d003e3e62364fa6db6"
@@ -2653,6 +2668,11 @@ natural-compare@^1.4.0:
   resolved "http://npm.wpt.la/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
+node-fetch@^2.6.1:
+  version "2.6.1"
+  resolved "http://npm.wpt.la/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
+  integrity sha1-BFvTI2Mfdu0uK1VXM5RBa2OaAFI=
+
 node-int64@^0.4.0:
   version "0.4.0"
   resolved "http://npm.wpt.la/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
@@ -2914,6 +2934,13 @@ qs@^6.9.1:
   integrity sha1-STFIL6jWR6Wqt5nFJx0hM7mB+2o=
   dependencies:
     side-channel "^1.0.4"
+
+queue@6.0.2:
+  version "6.0.2"
+  resolved "http://npm.wpt.la/queue/-/queue-6.0.2.tgz#b91525283e2315c7553d2efa18d83e76432fed65"
+  integrity sha1-uRUlKD4jFcdVPS76GNg+dkMv7WU=
+  dependencies:
+    inherits "~2.0.3"
 
 react-is@^17.0.1:
   version "17.0.2"

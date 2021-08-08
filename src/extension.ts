@@ -1,14 +1,14 @@
-import vscode, { ExtensionContext, Position, TextDocument } from "vscode";
-
 import path from "path";
 
+import vscode, { ExtensionContext, Position, TextDocument } from "vscode";
+
 import logger from "./log";
-import { extraPath, normalizeImage } from "./utils";
+import { extraPath, fetchImgInfo } from "./utils";
 
 export function activate(context: ExtensionContext) {
   logger.log("Image Hover Preview Started!");
 
-  function provideHover(document: TextDocument, position: Position) {
+  async function provideHover(document: TextDocument, position: Position) {
     const fileName = document.fileName;
 
     // @ts-ignore
@@ -25,7 +25,7 @@ export function activate(context: ExtensionContext) {
     }
 
     try {
-      const originalImage = extraPath(lineText);
+      const originalImage = extraPath(lineText, { dir: workDir });
 
       logger.log("Extra filepath from content");
       logger.log(originalImage);
@@ -35,16 +35,19 @@ export function activate(context: ExtensionContext) {
         return;
       }
 
-      const url = normalizeImage(originalImage, workDir);
-      logger.log(`normalized image is ${url}`);
+      const { path: url } = originalImage;
       if (url === null) {
         return;
       }
       logger.log(`displayed image path is ${url}`);
 
+      const { width, height, size } = await fetchImgInfo(originalImage);
+
       return new vscode.Hover(
         new vscode.MarkdownString(`
-  \r\n[![](${url}|width=240)](${url})`)
+  \r\n[![](${url}|width=240)](${url})
+  \r\n${size}(${width}x${height})
+  `)
       );
     } catch (err) {
       logger.error(err);

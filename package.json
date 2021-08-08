@@ -7,15 +7,6 @@
     "image preview"
   ],
   "version": "0.1.1",
-  "homepage": "https://github.com/ltaoo/vscode-plugin-image-hover-preview/blob/master/README.md",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ltaoo/vscode-plugin-image-hover-preview"
-  },
-  "bugs": {
-    "url": "https://github.com/ltaoo/vscode-plugin-image-hover-preview/issues"
-  },
-  "main": "./dist/main.js",
   "scripts": {
     "start": "npm run -S esbuild-base -- --sourcemap --watch",
     "build": "npm run -S esbuild-base -- --sourcemap",
@@ -25,18 +16,15 @@
     "publish": "yarn vsce publish",
     "test": "jest"
   },
-  "devDependencies": {
-    "@types/jest": "^26.0.24",
-    "@types/node": "^7.0.43",
-    "esbuild": "^0.12.6",
-    "eslint": "^4.11.0",
-    "jest": "^27.0.6",
-    "ts-jest": "^27.0.4",
-    "tsc": "^2.0.3",
-    "typescript": "^4.3.5",
-    "vsce": "^1.92.0",
-    "vscode": "^1.1.6"
+  "homepage": "https://github.com/ltaoo/vscode-plugin-image-hover-preview/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ltaoo/vscode-plugin-image-hover-preview"
   },
+  "bugs": {
+    "url": "https://github.com/ltaoo/vscode-plugin-image-hover-preview/issues"
+  },
+  "main": "./dist/main.js",
   "displayName": "Image Hover Preview",
   "publisher": "ltaoo",
   "engines": {
@@ -49,6 +37,23 @@
   "activationEvents": [
     "*"
   ],
+  "dependencies": {
+    "image-size": "^1.0.0",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.24",
+    "@types/node": "^7.0.43",
+    "esbuild": "^0.12.6",
+    "eslint": "^4.11.0",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.4",
+    "tsc": "^2.0.3",
+    "typescript": "^4.3.5",
+    "vsce": "^1.92.0",
+    "@types/node-fetch": "^2.5.12",
+    "vscode": "^1.1.6"
+  },
   "contributes": {
     "configuration": {},
     "commands": [],
