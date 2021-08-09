@@ -18,12 +18,8 @@ export interface IImage {
  * @param {{ type: number; path: string }} image
  * @returns boolean
  */
-export function hasProtocol(image: IImage) {
-  const { type, path } = image;
-  if (type === IMAGE_TYPE.Local) {
-    return false;
-  }
-  if (path.slice(0, 2) !== "//") {
+export function hasProtocol(image: string) {
+  if (image.slice(0, 2) !== "//") {
     return true;
   }
   return false;
@@ -31,13 +27,12 @@ export function hasProtocol(image: IImage) {
 
 /**
  * 增加协议头
- * @param {{ type: number; path: string }} image
  */
-export function addHttpsProtocol(image: IImage) {
+export function addHttpsProtocol(image: string) {
   if (!hasProtocol(image)) {
-    return `https:${image.path}`;
+    return `https:${image}`;
   }
-  return image.path;
+  return image;
 }
 
 /**
@@ -91,7 +86,7 @@ export function extraPath(
   if (onlinePath !== null) {
     return {
       type: IMAGE_TYPE.Online,
-      path: onlinePath,
+      path: addHttpsProtocol(onlinePath),
     };
   }
   const localPath = extraLocalPath(content, { ignore });
@@ -120,7 +115,7 @@ export function normalizeLocalFilepath(image: IImage, dir: string) {
 export function normalizeImage(image: IImage, dir: string) {
   const { type } = image;
   if (type === IMAGE_TYPE.Online) {
-    return addHttpsProtocol(image);
+    return addHttpsProtocol(image.path);
   }
   if (type === IMAGE_TYPE.Local) {
     return normalizeLocalFilepath(image, dir);

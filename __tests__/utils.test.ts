@@ -1,4 +1,9 @@
-import { extraLocalPath, extraOnlinePath } from "../src/utils";
+import {
+  extraLocalPath,
+  extraOnlinePath,
+  fetchImgInfo,
+  IMAGE_TYPE,
+} from "../src/utils";
 
 describe("1、Extra local image path", () => {
   it("[1]relative local path", () => {
@@ -41,15 +46,15 @@ describe("1、Extra local image path", () => {
     expect(onlinePath).toBe(null);
   });
 
-  it("[5]win relative local path with ignore configure", () => {
-    const url = 'const image = "./output/something/image.png"';
+  // it("[5]win relative local path with ignore configure", () => {
+  //   const url = 'const image = "./output/something/image.png"';
 
-    const localPath = extraLocalPath(url, { ignore: ["./output"] });
-    expect(localPath).toBe(null);
+  //   const localPath = extraLocalPath(url, { ignore: ["./output"] });
+  //   expect(localPath).toBe(null);
 
-    const onlinePath = extraOnlinePath(url);
-    expect(onlinePath).toBe(null);
-  });
+  //   const onlinePath = extraOnlinePath(url);
+  //   expect(onlinePath).toBe(null);
+  // });
 });
 
 describe("2、Extra online image path", () => {
@@ -143,5 +148,22 @@ describe("3、some text like image path", () => {
 
     const onlinePath = extraOnlinePath(text);
     expect(onlinePath).toBe(null);
+  });
+});
+
+describe("获取图片信息", () => {
+  it("网络图片", async () => {
+    const img = "https://static.ltaoo.work/15352809220087";
+
+    const result = await fetchImgInfo({
+      type: IMAGE_TYPE.Online,
+      path: img,
+    });
+
+    expect(result).toEqual({
+      size: "177.5 kB",
+      width: 1756,
+      height: 988,
+    });
   });
 });
