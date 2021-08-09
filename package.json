@@ -6,7 +6,7 @@
     "plugin",
     "image preview"
   ],
-  "version": "0.2.0",
+  "version": "0.2.1",
   "scripts": {
     "start": "npm run -S esbuild-base -- --sourcemap --watch",
     "build": "npm run -S esbuild-base -- --sourcemap",
