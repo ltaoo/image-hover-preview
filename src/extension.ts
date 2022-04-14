@@ -10,7 +10,7 @@ export function activate(context: ExtensionContext) {
 
   async function provideHover(document: TextDocument, position: Position) {
     const fileName = document.fileName;
-    const { showSize, maxWidth, ignore } =
+    const { showSize, ignore } =
       vscode.workspace.getConfiguration("imageHoverPreview");
 
     // @ts-ignore
@@ -43,18 +43,16 @@ export function activate(context: ExtensionContext) {
       }
       logger.log(`displayed image path is ${url}`);
 
-      const extraImageInfo = await (async () => {
-        if (showSize === false) {
-          return "";
-        }
+      const editorLineEndSequence = vscode.workspace.getConfiguration('files').get('eol');
+
+      let extraImageInfo = "";
+      if (showSize !== false) {
         const { width, height, size } = await fetchImgInfo(originalImage);
-        return `\r\n${size}(${width}x${height})`;
-      })();
+        extraImageInfo = `${editorLineEndSequence}${size}(${width}x${height})`;
+      }
 
       return new vscode.Hover(
-        new vscode.MarkdownString(`
-  \r\n[![](${url}](${url})
-  ${extraImageInfo}
+        new vscode.MarkdownString(`${extraImageInfo}${editorLineEndSequence}[![](${url})](${url})${editorLineEndSequence}
   `)
       );
     } catch (err) {
