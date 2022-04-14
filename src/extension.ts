@@ -53,7 +53,7 @@ export function activate(context: ExtensionContext) {
 
       return new vscode.Hover(
         new vscode.MarkdownString(`
-  \r\n[![](${url}|width=${maxWidth})](${url})
+  \r\n[![](${url}](${url})
   ${extraImageInfo}
   `)
       );
