@@ -43,16 +43,18 @@ export function activate(context: ExtensionContext) {
       }
       logger.log(`displayed image path is ${url}`);
 
-      const editorLineEndSequence = vscode.workspace.getConfiguration('files').get('eol');
-
-      let extraImageInfo = "";
-      if (showSize !== false) {
+      const extraImageInfo = await (async () => {
+        if (showSize === false) {
+          return "";
+        }
         const { width, height, size } = await fetchImgInfo(originalImage);
-        extraImageInfo = `${editorLineEndSequence}${size}(${width}x${height})`;
-      }
+        return `\r\n${size}(${width}x${height})`;
+      })();
 
       return new vscode.Hover(
-        new vscode.MarkdownString(`${extraImageInfo}${editorLineEndSequence}[![](${url})](${url})${editorLineEndSequence}
+        new vscode.MarkdownString(`
+  \r\n[![](${url})](${url})
+  ${extraImageInfo}
   `)
       );
     } catch (err) {
