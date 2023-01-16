@@ -1,3 +1,5 @@
+import { describe, it, expect } from "vitest";
+
 import {
   extraLocalPath,
   extraOnlinePath,
@@ -6,7 +8,7 @@ import {
 } from "../src/utils";
 
 describe("1、Extra local image path", () => {
-  it("[1]relative local path", () => {
+  it("[1]linux relative local path", () => {
     const url = 'const image = "./images/icon.png"';
 
     const localPath = extraLocalPath(url);
@@ -16,7 +18,7 @@ describe("1、Extra local image path", () => {
     expect(onlinePath).toBe(null);
   });
 
-  it("[2]absolute local path", () => {
+  it("[2]linux absolute local path", () => {
     const url = 'const image = "/images/icon.png"';
 
     const localPath = extraLocalPath(url);
@@ -26,7 +28,17 @@ describe("1、Extra local image path", () => {
     expect(onlinePath).toBe(null);
   });
 
-  it("[3]win absolute local path", () => {
+  it("[3]linux relative local path with ignore configure", () => {
+    const url = 'const image = "./output/something/image.png"';
+
+    const localPath = extraLocalPath(url, { ignore: [/\.\/output/] });
+    expect(localPath).toBe(null);
+
+    const onlinePath = extraOnlinePath(url);
+    expect(onlinePath).toBe(null);
+  });
+
+  it("[4]win absolute local path", () => {
     const url = 'const image = "C:\\images\\icon.png"';
 
     const localPath = extraLocalPath(url);
@@ -36,7 +48,7 @@ describe("1、Extra local image path", () => {
     expect(onlinePath).toBe(null);
   });
 
-  it("[4]win relative local path", () => {
+  it("[5]win relative local path", () => {
     const url = 'const image = "\\images\\icon.png"';
 
     const localPath = extraLocalPath(url);
@@ -45,16 +57,6 @@ describe("1、Extra local image path", () => {
     const onlinePath = extraOnlinePath(url);
     expect(onlinePath).toBe(null);
   });
-
-  // it("[5]win relative local path with ignore configure", () => {
-  //   const url = 'const image = "./output/something/image.png"';
-
-  //   const localPath = extraLocalPath(url, { ignore: ["./output"] });
-  //   expect(localPath).toBe(null);
-
-  //   const onlinePath = extraOnlinePath(url);
-  //   expect(onlinePath).toBe(null);
-  // });
 });
 
 describe("2、Extra online image path", () => {
@@ -85,7 +87,7 @@ describe("2、Extra online image path", () => {
     expect(localPath).toBe(null);
 
     const onlinePath = extraOnlinePath(text);
-    expect(onlinePath).toBe(null);
+    expect(onlinePath).toBe("//static.ltaoo.work/15352809220087");
   });
 });
 

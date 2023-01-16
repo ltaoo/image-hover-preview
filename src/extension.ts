@@ -5,17 +5,25 @@ import vscode, { ExtensionContext, Position, TextDocument } from "vscode";
 import logger from "./log";
 import { extraPath, fetchImgInfo } from "./utils";
 
+interface PluginSettings {
+  /** 是否展示文件大小 */
+  showSize: boolean;
+  /** 需要忽略的图片地址 */
+  ignore: (string | RegExp)[];
+  /** 支持的文档类型，见 https://code.visualstudio.com/api/references/document-selector */
+  languages: string[];
+}
+
 export function activate(context: ExtensionContext) {
   logger.log("Image Hover Preview Started!");
+  const settings = vscode.workspace.getConfiguration("imageHoverPreview");
+  const { showSize, ignore, languages } = settings as any as PluginSettings;
 
   async function provideHover(document: TextDocument, position: Position) {
     const fileName = document.fileName;
-    const { showSize, ignore } =
-      vscode.workspace.getConfiguration("imageHoverPreview");
 
-    // @ts-ignore
-    const { _line } = position;
-    const line = document.lineAt(_line);
+    const { line: lineNumber } = position;
+    const line = document.lineAt(lineNumber);
     const lineText = line.text;
     const workDir = path.dirname(fileName);
 
@@ -61,22 +69,9 @@ export function activate(context: ExtensionContext) {
       logger.error(err);
     }
   }
-
-  [
-    "css",
-    "javascript",
-    "less",
-    "typescriptreact",
-    "typescript",
-    "javascriptreact",
-    "html",
-    "markdown",
-    "vue",
-  ].forEach((extension) => {
-    context.subscriptions.push(
-      vscode.languages.registerHoverProvider(extension, {
-        provideHover,
-      })
-    );
+  languages.forEach((language) => {
+    vscode.languages.registerHoverProvider(language, {
+      provideHover,
+    });
   });
 }

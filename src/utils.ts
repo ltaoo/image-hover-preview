@@ -15,8 +15,7 @@ export interface IImage {
 
 /**
  * 图片是否有协议头
- * @param {{ type: number; path: string }} image
- * @returns boolean
+ * @param {IImage} image 图片
  */
 export function hasProtocol(image: string) {
   if (image.slice(0, 2) !== "//") {
@@ -27,6 +26,7 @@ export function hasProtocol(image: string) {
 
 /**
  * 增加协议头
+ * @param {string} image 图片地址
  */
 export function addHttpsProtocol(image: string) {
   if (!hasProtocol(image)) {
@@ -37,6 +37,9 @@ export function addHttpsProtocol(image: string) {
 
 /**
  * 从一段文本中提取出网络地址
+ * @param {string} content 文本内容
+ * @param {object} options
+ * @param {(string | RegExp)[]} options.ignore 忽略的图片地址
  */
 export function extraOnlinePath(
   content: string,
@@ -53,29 +56,59 @@ export function extraOnlinePath(
 
 /**
  * 从一段文本中提取出本地图片地址
- * @param {string} content - 文本
- * @returns - null | string
+ * @param {string} content 文本
+ * @param {object} options 配置
+ * @param {(string | RegExp)[]} options.ignore 需要忽略的地址
  */
 export function extraLocalPath(
   content: string,
-  { ignore }: { ignore?: (string | RegExp)[] } = {}
+  options: { ignore?: (string | RegExp)[] } = {}
 ) {
+  const isImportModule =
+    content.indexOf("import") !== -1 || content.indexOf("require") !== -1;
+  if (isImportModule) {
+    return null;
+  }
   const linuxRegexp =
     /(?:[A-Z]:|\\|(?:\.{1,2}[\/\\])+)[\w+\\\s_\(\)\/]+(?:\.\w+)*/;
   let file = content.match(linuxRegexp);
-  if (file !== null) {
-    const filepath = file[0];
-    const { ext } = path.parse(filepath);
-    if (ext !== "") {
-      return filepath;
-    }
+  if (file === null) {
+    return null;
   }
-  return null;
+  const filepath = file[0];
+  const { ext } = path.parse(filepath);
+  if (ext === "") {
+    return null;
+  }
+  const { ignore } = options;
+  if (ignore === undefined) {
+    return filepath;
+  }
+  if (!Array.isArray(ignore)) {
+    return filepath;
+  }
+  if (ignore.length === 0) {
+    return filepath;
+  }
+  const needIgnore = ignore.some((stringOrRegexp) => {
+    console.log("[]ignore", stringOrRegexp, filepath);
+    if (typeof stringOrRegexp === "string") {
+      return stringOrRegexp === filepath;
+    }
+    return stringOrRegexp.test(filepath);
+  });
+  if (needIgnore) {
+    return null;
+  }
+  return filepath;
 }
 
 /**
  * 从一段文本中提取出图片地址，网络图片或者本地图片
- * @param {string} content - 文本
+ * @param {string} content 文本
+ * @param {object} options 额外选项
+ * @param {string} options.dir 项目根路径
+ * @param {(string | RegExp)[]} options.ignore 要忽略的路径，支持字符串或正则
  */
 export function extraPath(
   content: string,
@@ -100,17 +133,18 @@ export function extraPath(
 }
 
 /**
- *
- * @param {{ type: number; path: string }} image
- * @param {string} dir
+ * 获取本地图片的完整路径
+ * @param {IImage} image 图片
+ * @param {string} dir 相对根目录
  */
 export function normalizeLocalFilepath(image: IImage, dir: string) {
   const { path: url } = image;
   return path.resolve(dir, url);
 }
 /**
- *
- * @param {{ type: number; path: string }} image
+ * 格式化图片，添加前缀等操作
+ * @param {IImage} image 图片
+ * @param {string} dir 相对根目录
  */
 export function normalizeImage(image: IImage, dir: string) {
   const { type } = image;
@@ -125,6 +159,7 @@ export function normalizeImage(image: IImage, dir: string) {
 
 /**
  * 获取图片信息，尺寸和大小
+ * @param {IImage} image 图片
  */
 export function fetchImgInfo(
   image: IImage
