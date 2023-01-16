@@ -7,3 +7,5 @@ coverage
 
 .vscode-test/
 *.vsix
+
+*.log
