@@ -12,8 +12,8 @@
     "build": "npm run -S esbuild-base -- --sourcemap",
     "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
     "vscode:prepublish": "npm run -S esbuild-base -- --minify",
-    "package": "yarn vsce package",
-    "publish": "yarn vsce publish",
+    "pkg": "yarn vsce package",
+    "pub": "yarn vsce publish",
     "test": "vitest"
   },
   "homepage": "https://github.com/ltaoo/vscode-plugin-image-hover-preview/blob/master/README.md",
