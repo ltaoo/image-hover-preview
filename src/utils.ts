@@ -43,15 +43,32 @@ export function addHttpsProtocol(image: string) {
  */
 export function extraOnlinePath(
   content: string,
-  { ignore }: { ignore?: (string | RegExp)[] } = {}
+  { ignore, col }: { ignore?: (string | RegExp)[]; col?: number } = {}
 ) {
   const regexp =
-    /((https?):)?\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/;
+    /((https?):)?\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/g;
   const res = content.match(regexp);
   if (res === null) {
     return null;
   }
-  return res[0];
+  if (col === undefined) {
+    return res[0];
+  }
+  const matchedResultIndexRanges = res.map((result) => {
+    const index = content.indexOf(result);
+    return {
+      s: index,
+      e: index + result.length,
+      c: result,
+    };
+  });
+  const matchedResultInRange = matchedResultIndexRanges.find((range) => {
+    return range.s <= col && range.e >= col;
+  });
+  if (!matchedResultInRange) {
+    return res[0];
+  }
+  return matchedResultInRange.c;
 }
 
 /**
@@ -91,7 +108,7 @@ export function extraLocalPath(
     return filepath;
   }
   const needIgnore = ignore.some((stringOrRegexp) => {
-    console.log("[]ignore", stringOrRegexp, filepath);
+    // console.log("[]ignore", stringOrRegexp, filepath);
     if (typeof stringOrRegexp === "string") {
       return stringOrRegexp === filepath;
     }
@@ -108,14 +125,15 @@ export function extraLocalPath(
  * @param {string} content 文本
  * @param {object} options 额外选项
  * @param {string} options.dir 项目根路径
+ * @param {string} options.col 鼠标在当前行的列下标
  * @param {(string | RegExp)[]} options.ignore 要忽略的路径，支持字符串或正则
  */
 export function extraPath(
   content: string,
-  options: { dir: string; ignore: (string | RegExp)[] }
+  options: { dir: string; col: number; ignore: (string | RegExp)[] }
 ) {
-  const { dir, ignore } = options || {};
-  const onlinePath = extraOnlinePath(content, { ignore });
+  const { dir, ignore, col } = options || {};
+  const onlinePath = extraOnlinePath(content, { ignore, col });
   if (onlinePath !== null) {
     return {
       type: IMAGE_TYPE.Online,

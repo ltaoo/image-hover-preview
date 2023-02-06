@@ -22,7 +22,8 @@ export function activate(context: ExtensionContext) {
   async function provideHover(document: TextDocument, position: Position) {
     const fileName = document.fileName;
 
-    const { line: lineNumber } = position;
+    const { line: lineNumber, character: colNumber } = position;
+    logger.log(position);
     const line = document.lineAt(lineNumber);
     const lineText = line.text;
     const workDir = path.dirname(fileName);
@@ -35,7 +36,11 @@ export function activate(context: ExtensionContext) {
     }
 
     try {
-      const originalImage = extraPath(lineText, { dir: workDir, ignore });
+      const originalImage = extraPath(lineText, {
+        dir: workDir,
+        col: colNumber,
+        ignore,
+      });
 
       logger.log("Extra filepath from content");
       logger.log(originalImage);

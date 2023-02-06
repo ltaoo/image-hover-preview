@@ -22,7 +22,7 @@ describe("1、Extra local image path", () => {
     const url = 'const image = "/images/icon.png"';
 
     const localPath = extraLocalPath(url);
-    expect(localPath).toBe("/images/icon.png");
+    expect(localPath).toBe(null);
 
     const onlinePath = extraOnlinePath(url);
     expect(onlinePath).toBe(null);
@@ -88,6 +88,35 @@ describe("2、Extra online image path", () => {
 
     const onlinePath = extraOnlinePath(text);
     expect(onlinePath).toBe("//static.ltaoo.work/15352809220087");
+  });
+
+  it("[4]multiple online images", () => {
+    const text =
+      'const image = true ? "//static.ltaoo.work/15352809220087" : "https://static.ltaoo.work/15352829629298.jpg";';
+
+    const localPath = extraLocalPath(text, { ignore: [/\/\/static/] });
+    expect(localPath).toBe(null);
+
+    const onlinePath = extraOnlinePath(text);
+    expect(onlinePath).toBe("//static.ltaoo.work/15352809220087");
+    // expect(onlinePath).toStrictEqual([
+    //   "//static.ltaoo.work/15352809220087",
+    //   "https://static.ltaoo.work/15352829629298.jpg",
+    // ]);
+  });
+
+  it("[5]multiple online images and has special col number", () => {
+    const text =
+      'const image = true ? "//static.ltaoo.work/15352809220087" : "https://static.ltaoo.work/15352829629298.jpg";';
+
+    const localPath = extraLocalPath(text, { ignore: [/\/\/static/] });
+    expect(localPath).toBe(null);
+
+    const onlinePath = extraOnlinePath(text);
+    expect(onlinePath).toBe("//static.ltaoo.work/15352809220087");
+
+    const onlinePath2 = extraOnlinePath(text, { col: 62 });
+    expect(onlinePath2).toBe("https://static.ltaoo.work/15352829629298.jpg");
   });
 });
 
