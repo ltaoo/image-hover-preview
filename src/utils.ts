@@ -7,6 +7,7 @@ import sizeOf from "image-size";
 export enum IMAGE_TYPE {
   Online = 1,
   Local = 2,
+  Base64 = 3,
 }
 export interface IImage {
   type: IMAGE_TYPE;
@@ -82,7 +83,7 @@ export function extraLocalPath(
   options: { ignore?: (string | RegExp)[] } = {}
 ) {
   const isImportModule =
-    content.indexOf("import") !== -1 || content.indexOf("require") !== -1;
+    content.match(/import\b/) || content.indexOf("require") !== -1;
   if (isImportModule) {
     return null;
   }
@@ -120,6 +121,15 @@ export function extraLocalPath(
   return filepath;
 }
 
+export function extraBase64(content: string) {
+  const regexp = /data:image\/[a-zA-Z]{1,};base64,([A-Za-z0-9+/=]{1,})/;
+  const matched = content.match(regexp);
+  if (!matched) {
+    return null;
+  }
+  return matched[0];
+}
+
 /**
  * 从一段文本中提取出图片地址，网络图片或者本地图片
  * @param {string} content 文本
@@ -133,18 +143,25 @@ export function extraPath(
   options: { dir: string; col: number; ignore: (string | RegExp)[] }
 ) {
   const { dir, ignore, col } = options || {};
+  const base64 = extraBase64(content);
+  if (base64 !== null) {
+    return {
+      type: IMAGE_TYPE.Base64,
+      path: base64 ?? null,
+    };
+  }
   const onlinePath = extraOnlinePath(content, { ignore, col });
   if (onlinePath !== null) {
     return {
       type: IMAGE_TYPE.Online,
-      path: addHttpsProtocol(onlinePath),
+      path: addHttpsProtocol(onlinePath) ?? null,
     };
   }
-  const localPath = extraLocalPath(content, { ignore });
+  let localPath = extraLocalPath(content, { ignore });
   if (localPath !== null) {
     return {
       type: IMAGE_TYPE.Local,
-      path: path.resolve(localPath, dir),
+      path: normalizeLocalFilepath(localPath, dir) ?? null,
     };
   }
   return null;
@@ -152,27 +169,16 @@ export function extraPath(
 
 /**
  * 获取本地图片的完整路径
- * @param {IImage} image 图片
+ * @param {IImage} filepath 图片
  * @param {string} dir 相对根目录
  */
-export function normalizeLocalFilepath(image: IImage, dir: string) {
-  const { path: url } = image;
-  return path.resolve(dir, url);
-}
-/**
- * 格式化图片，添加前缀等操作
- * @param {IImage} image 图片
- * @param {string} dir 相对根目录
- */
-export function normalizeImage(image: IImage, dir: string) {
-  const { type } = image;
-  if (type === IMAGE_TYPE.Online) {
-    return addHttpsProtocol(image.path);
+export function normalizeLocalFilepath(filepath: string, dir: string) {
+  const url = filepath;
+  const r = path.resolve(dir, url);
+  if (r.match(/^[a-zA-Z]:\\/)) {
+    return "/" + r.replace(/\\/g, "/");
   }
-  if (type === IMAGE_TYPE.Local) {
-    return normalizeLocalFilepath(image, dir);
-  }
-  return null;
+  return r;
 }
 
 /**

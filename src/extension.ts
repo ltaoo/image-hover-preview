@@ -3,7 +3,7 @@ import path from "path";
 import vscode, { ExtensionContext, Position, TextDocument } from "vscode";
 
 import logger from "./log";
-import { extraPath, fetchImgInfo } from "./utils";
+import { extraPath, fetchImgInfo, IMAGE_TYPE } from "./utils";
 
 interface PluginSettings {
   /** 是否展示文件大小 */
@@ -27,16 +27,17 @@ export function activate(context: ExtensionContext) {
     const line = document.lineAt(lineNumber);
     const lineText = line.text;
     const workDir = path.dirname(fileName);
+    const ext = path.extname(fileName);
 
     const isImportModule =
-      lineText.indexOf("import") !== -1 || lineText.indexOf("require") !== -1;
+      lineText.match(/import\b/) || lineText.indexOf("require") !== -1;
 
     if (isImportModule) {
       return;
     }
 
     try {
-      const originalImage = extraPath(lineText, {
+      const originalImage = await extraPath(lineText, {
         dir: workDir,
         col: colNumber,
         ignore,
@@ -49,14 +50,22 @@ export function activate(context: ExtensionContext) {
       if (originalImage === null) {
         return;
       }
-
-      const { path: url } = originalImage;
+      const { type, path: url } = originalImage;
       if (url === null) {
+        return;
+      }
+      if (type === IMAGE_TYPE.Local && ext.toLowerCase() === '.md') {
         return;
       }
       logger.log(`displayed image path is ${url}`);
 
       const extraImageInfo = await (async () => {
+        if (type === IMAGE_TYPE.Base64) {
+          return "";
+        }
+        if (type === IMAGE_TYPE.Local) {
+          return "";
+        }
         if (showSize === false) {
           return "";
         }

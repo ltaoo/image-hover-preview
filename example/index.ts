@@ -1,3 +1,5 @@
+import foo from './index';
+
 function foo() {
   const image = "./icon.svg";
 
